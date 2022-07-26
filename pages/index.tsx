@@ -1,15 +1,14 @@
 import type { NextPage } from 'next'
-import { trpc } from '../utils/trpc'
+import { signOut } from 'next-auth/react'
+import { useRequireAuth } from 'utils/auth'
 
 const Home: NextPage = () => {
-  const hello = trpc.useQuery(['hello', { text: 'client' }])
-  if (!hello.data && hello.isLoading) {
-    return <div>Loading...</div>
-  }
-
   return (
     <div className="flex min-h-screen flex-col items-center justify-center py-2">
-      <h1>{hello.data?.greeting}</h1>
+      Hello
+      <button className="my-4 rounded-md bg-black py-2 px-4 text-white" onClick={() => signOut()}>
+        Sign out
+      </button>
     </div>
   )
 }

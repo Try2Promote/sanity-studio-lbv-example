@@ -1,15 +1,24 @@
 import '../styles/globals.css'
 import type { AppProps } from 'next/app'
 import { withTRPC } from '@trpc/next'
-import { AppRouter } from './api/trpc/[trpc]'
+import { AppRouter } from 'server/routers/_app'
+import superjson from 'superjson'
+import { SessionProvider } from 'next-auth/react'
+import Layout from 'components/Layout'
 
-const MyApp = ({ Component, pageProps }: AppProps) => {
-  return <Component {...pageProps} />
+const MyApp = ({ Component, pageProps: { session, ...pageProps } }: AppProps) => {
+  return (
+    <SessionProvider session={session}>
+      <Layout>
+        <Component {...pageProps} />
+      </Layout>
+    </SessionProvider>
+  )
 }
 
 export default withTRPC<AppRouter>({
   ssr: true,
-  config: ({ ctx }) => {
+  config: () => {
     /**
      * If you want to use SSR, you need to use the server's full URL
      * @link https://trpc.io/docs/ssr
@@ -20,6 +29,7 @@ export default withTRPC<AppRouter>({
 
     return {
       url,
+      transformer: superjson,
       /**
        * @link https://react-query.tanstack.com/reference/QueryClient
        */
